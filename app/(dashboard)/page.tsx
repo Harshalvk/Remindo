@@ -70,4 +70,11 @@ const CollectionList = async () => {
       </div>
     );
   }
+
+  return(
+    <div>
+      Collections: {collections.length}
+      <CreateCollectionBtn/>
+    </div>
+  )
 };

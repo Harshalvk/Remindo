@@ -32,6 +32,10 @@ import { CollectionColor, CollectionColors } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { Separator } from "./ui/separator";
 import { Button } from "./ui/button";
+import { createCollection } from "@/actions/collection";
+import { toast } from "sonner";
+import { ReloadIcon } from "@radix-ui/react-icons";
+import { useRouter } from "next/navigation";
 
 type Props = {
   open: boolean;
@@ -44,14 +48,29 @@ const CreateCollectionSheet = ({ open, onOpenChange }: Props) => {
     defaultValues: {},
   });
 
-  const onSubmit = (data: createCollectionSchemaType) => {
-    console.log("Submitted", data);
+  const router = useRouter();
+
+  const onSubmit = async (data: createCollectionSchemaType) => {
+    try {
+      await createCollection(data);
+
+      openChangeWrapper(false);
+      router.refresh();
+
+      toast.success("Success", {
+        description: "Collection created successfully!",
+      });
+    } catch (error) {
+      toast.error("Error", {
+        description: "Something went wrong, Please try again later",
+      });
+    }
   };
 
   const openChangeWrapper = (open: boolean) => {
-    form.reset()
-    onOpenChange(open)
-  }
+    form.reset();
+    onOpenChange(open);
+  };
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -127,7 +146,15 @@ const CreateCollectionSheet = ({ open, onOpenChange }: Props) => {
         </Form>
         <div className="flex flex-col gap-3 mt-4">
           <Separator />
-          <Button onClick={form.handleSubmit(onSubmit)}>Confirm</Button>
+          <Button
+            disabled={form.formState.isSubmitting}
+            onClick={form.handleSubmit(onSubmit)}
+          >
+            Confirm
+            {form.formState.isSubmitting && (
+              <ReloadIcon className="ml-2 h-4 w-4 animate-spin" />
+            )}
+          </Button>
         </div>
       </SheetContent>
     </Sheet>
