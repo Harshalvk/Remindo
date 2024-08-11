@@ -5,7 +5,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "./ui/collapsible";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 import { CollectionColor, CollectionColors } from "@/lib/constants";
@@ -26,6 +26,7 @@ import {
 import { toast } from "sonner";
 import { deleteCollection } from "@/actions/collection";
 import { useRouter } from "next/navigation";
+import { LoaderCircle } from "lucide-react";
 
 type Props = {
   collection: Collection;
@@ -36,6 +37,8 @@ const task: string[] = ["Task1", "Task2"];
 const CollectionCard = ({ collection }: Props) => {
   const [isOpen, setIsOpen] = useState(true);
   const router = useRouter();
+
+  const [isLoading, startTransition] = useTransition();
 
   const removeCollection = async () => {
     try {
@@ -48,7 +51,7 @@ const CollectionCard = ({ collection }: Props) => {
       toast.error("Error", {
         description: "Cannot delete collection",
       });
-      console.log("🚨Error while deleting collection", error.message)
+      console.log("🚨Error while deleting collection", error);
     }
   };
 
@@ -83,31 +86,41 @@ const CollectionCard = ({ collection }: Props) => {
         <Separator />
         <footer className="h-[40px] px-4 p-[2px] text-xs text-neutral-500 flex justify-between items-center">
           <p>Created at {collection.createdAt.toLocaleDateString("en-US")}</p>
-          <div>
-            <Button size={"icon"} variant={"ghost"}>
-              <PlusIcon />
-            </Button>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button size={"icon"} variant={"ghost"}>
-                  <TrashIcon />
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete
-                  your collection and all task inside it.
-                </AlertDialogDescription>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancle</AlertDialogCancel>
-                  <AlertDialogAction onClick={() => removeCollection()}>
-                    Proceed
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
+          {isLoading && (
+            <div className="flex items-center gap-1">
+              <LoaderCircle className="h-4 animate-spin"/>
+              <p>Deleting</p>
+            </div>
+          )}
+          {!isLoading && (
+            <div>
+              <Button size={"icon"} variant={"ghost"}>
+                <PlusIcon />
+              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button size={"icon"} variant={"ghost"}>
+                    <TrashIcon />
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete
+                    your collection and all task inside it.
+                  </AlertDialogDescription>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancle</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() => startTransition(removeCollection)}
+                    >
+                      Proceed
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          )}
         </footer>
       </CollapsibleContent>
     </Collapsible>
