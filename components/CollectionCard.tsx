@@ -15,9 +15,17 @@ import { Separator } from "./ui/separator";
 import PlusIcon from "./icons/PlusIcon";
 import {
   AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
   AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogTitle,
   AlertDialogTrigger,
 } from "./ui/alert-dialog";
+import { toast } from "sonner";
+import { deleteCollection } from "@/actions/collection";
+import { useRouter } from "next/navigation";
 
 type Props = {
   collection: Collection;
@@ -27,6 +35,23 @@ const task: string[] = ["Task1", "Task2"];
 
 const CollectionCard = ({ collection }: Props) => {
   const [isOpen, setIsOpen] = useState(true);
+  const router = useRouter();
+
+  const removeCollection = async () => {
+    try {
+      await deleteCollection(collection.id);
+      toast.success("Success", {
+        description: "Collection deleted successfully!",
+      });
+      router.refresh();
+    } catch (error) {
+      toast.error("Error", {
+        description: "Cannot delete collection",
+      });
+      console.log("🚨Error while deleting collection", error.message)
+    }
+  };
+
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <CollapsibleTrigger asChild>
@@ -68,7 +93,19 @@ const CollectionCard = ({ collection }: Props) => {
                   <TrashIcon />
                 </Button>
               </AlertDialogTrigger>
-              <AlertDialogContent></AlertDialogContent>
+              <AlertDialogContent>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete
+                  your collection and all task inside it.
+                </AlertDialogDescription>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancle</AlertDialogCancel>
+                  <AlertDialogAction onClick={() => removeCollection()}>
+                    Proceed
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
             </AlertDialog>
           </div>
         </footer>
