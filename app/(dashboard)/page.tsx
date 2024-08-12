@@ -54,6 +54,9 @@ const CollectionList = async () => {
   const session = await getServerSession();
   const user = session?.user;
   const collections = await prisma.collection.findMany({
+    include: {
+      tasks: true
+    },
     where: {
       userId: user?.email!,
     },
