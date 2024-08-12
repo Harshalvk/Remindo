@@ -27,3 +27,5 @@ const createTask = async (data: createTaskSchemaType) => {
     },
   });
 };
+
+export default createTask
