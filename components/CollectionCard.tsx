@@ -62,6 +62,11 @@ const CollectionCard = ({ collection }: Props) => {
 
   return (
     <>
+    <CreateTaskDialog
+      open={showCreateTaskModal}
+      setOpen={setShowCreateTaskModal}
+      collection={collection}
+    />
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CollapsibleTrigger asChild>
           <Button
