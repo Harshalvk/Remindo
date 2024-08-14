@@ -62,11 +62,11 @@ const CollectionCard = ({ collection }: Props) => {
 
   return (
     <>
-    <CreateTaskDialog
-      open={showCreateTaskModal}
-      setOpen={setShowCreateTaskModal}
-      collection={collection}
-    />
+      <CreateTaskDialog
+        open={showCreateTaskModal}
+        setOpen={setShowCreateTaskModal}
+        collection={collection}
+      />
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CollapsibleTrigger asChild>
           <Button
@@ -83,7 +83,16 @@ const CollectionCard = ({ collection }: Props) => {
           </Button>
         </CollapsibleTrigger>
         <CollapsibleContent className="flex flex-col rounded-b-md dark:bg-neutral-900 shadow-lg">
-          {tasks.length === 0 && <div>No tasks</div>}
+          {tasks.length === 0 && (
+            <Button
+              variant={"ghost"}
+              className="flex items-center justify-center gap-1 p-8 py-12 rounded-none"
+              onClick={() => setShowCreateTaskModal(true)}
+            >
+              <p>There are no tasks yet:</p>
+              <span>Create one</span>
+            </Button>
+          )}
           {tasks.length > 0 && (
             <>
               <Progress className="rounded-none h-1" value={45} />
