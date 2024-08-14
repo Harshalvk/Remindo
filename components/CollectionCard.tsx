@@ -90,7 +90,14 @@ const CollectionCard = ({ collection }: Props) => {
               onClick={() => setShowCreateTaskModal(true)}
             >
               <p>There are no tasks yet:</p>
-              <span>Create one</span>
+              <span
+                className={cn(
+                  "text-transparent bg-clip-text",
+                  CollectionColors[collection.color as CollectionColor]
+                )}
+              >
+                Create one
+              </span>
             </Button>
           )}
           {tasks.length > 0 && (
