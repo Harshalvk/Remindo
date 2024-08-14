@@ -28,4 +28,23 @@ const createTask = async (data: createTaskSchemaType) => {
   });
 };
 
-export default createTask
+const setTaskToDone = async (id: number) => {
+  const session = await getServerSession();
+  const user = session?.user;
+
+  if (!user?.email) {
+    throw new Error("user not found");
+  }
+
+  return await prisma.task.update({
+    where: {
+      id: id,
+      userId: user.email,
+    },
+    data: {
+      done: true,
+    },
+  });
+};
+
+export { createTask, setTaskToDone };
