@@ -28,6 +28,7 @@ import { deleteCollection } from "@/actions/collection";
 import { useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
 import CreateTaskDialog from "./CreateTaskDialog";
+import TaskCard from "./TaskCard";
 
 type Props = {
   collection: Collection & {
@@ -105,7 +106,7 @@ const CollectionCard = ({ collection }: Props) => {
               <Progress className="rounded-none h-1" value={45} />
               <div className="p-4 gap-3 flex flex-col">
                 {tasks.map((task) => (
-                  <div key={task.id}>{task.content}</div>
+                  <TaskCard key={task.id} task={task}/>
                 ))}
               </div>
             </>
