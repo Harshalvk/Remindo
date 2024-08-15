@@ -5,7 +5,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "./ui/collapsible";
-import { useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 import { CollectionColor, CollectionColors } from "@/lib/constants";
@@ -61,6 +61,14 @@ const CollectionCard = ({ collection }: Props) => {
     }
   };
 
+  const taskDone = useMemo(() => {
+    return collection.tasks.filter((task) => task.done).length;
+  }, [collection.tasks]);
+
+  const totalTasks = collection.tasks.length;
+
+  const progress = totalTasks === 0 ? 0 : (taskDone / totalTasks) * 100;
+
   return (
     <>
       <CreateTaskDialog
@@ -103,10 +111,10 @@ const CollectionCard = ({ collection }: Props) => {
           )}
           {tasks.length > 0 && (
             <>
-              <Progress className="rounded-none h-1" value={45} />
+              <Progress className="rounded-none h-1" value={progress} />
               <div className="p-4 gap-3 flex flex-col">
                 {tasks.map((task) => (
-                  <TaskCard key={task.id} task={task}/>
+                  <TaskCard key={task.id} task={task} />
                 ))}
               </div>
             </>

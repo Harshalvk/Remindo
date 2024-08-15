@@ -27,7 +27,7 @@ import { Calendar } from "./ui/calendar";
 import { Button } from "./ui/button";
 import { CalendarIcon, LoaderCircle } from "lucide-react";
 import { format } from "date-fns";
-import createTask from "@/actions/task";
+import { createTask } from "@/actions/task";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
