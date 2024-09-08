@@ -14,7 +14,7 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useLayoutEffect, useState } from "react";
 
-const signInpage = () => {
+const page = () => {
   const session = useSession();
   const router = useRouter();
   useLayoutEffect(() => {
@@ -54,4 +54,4 @@ const signInpage = () => {
   );
 };
 
-export default signInpage;
+export default page;
