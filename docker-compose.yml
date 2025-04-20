@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  remindo-postgres:
+    image: postgres
+    restart: always
+    container_name: remindo-postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=harshal
+      - PG_DATA=/data/postgres-remindo
+    volumes:
+      - postgres-remindo:/data/postgres-remindo
+
+volumes:
+  postgres-remindo:
