@@ -1,11 +1,11 @@
 "use server";
 
+import { auth } from "@/auth";
 import prisma from "@/lib/primsa";
 import { createTaskSchemaType } from "@/schema/createTask";
-import { getServerSession } from "next-auth";
 
 const createTask = async (data: createTaskSchemaType) => {
-  const session = await getServerSession();
+  const session = await auth();
   const user = session?.user;
 
   if (!user?.email) {
@@ -29,7 +29,7 @@ const createTask = async (data: createTaskSchemaType) => {
 };
 
 const setTaskToDone = async (id: number) => {
-  const session = await getServerSession();
+  const session = await auth();
   const user = session?.user;
 
   if (!user?.email) {

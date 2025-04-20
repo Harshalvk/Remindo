@@ -1,10 +1,11 @@
 "use server";
+import { auth } from "@/auth";
 import prisma from "@/lib/primsa";
 import { createCollectionSchemaType } from "@/schema/createCollection";
-import { getServerSession } from "next-auth";
 
 export async function createCollection(form: createCollectionSchemaType) {
-  const session = await getServerSession();
+  const session = await auth();
+  console.log(JSON.stringify(session));
   if (!session?.user) {
     throw new Error("User not found");
   }
@@ -19,14 +20,14 @@ export async function createCollection(form: createCollectionSchemaType) {
 }
 
 export async function deleteCollection(id: number) {
-  const session = await getServerSession();
+  const session = await auth();
   if (!session?.user) {
     throw new Error("User not found");
   }
 
   return await prisma.collection.delete({
     where: {
-      id: id
+      id: id,
     },
   });
 }
