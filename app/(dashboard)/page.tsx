@@ -4,11 +4,16 @@ import SadFace from "@/components/icons/SadFace";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import prisma from "@/lib/primsa";
-import { wait } from "@/lib/wait";
-import { getServerSession } from "next-auth";
 import { Suspense } from "react";
+import { auth } from "@/auth";
 
 export default async function Home() {
+  const session = await auth();
+
+  if (!session?.user) {
+    return <p>Not Authorized. Please signIn</p>;
+  }
+
   return (
     <>
       <Suspense fallback={<WelcomeMsgFallback />}>
@@ -22,8 +27,7 @@ export default async function Home() {
 }
 
 const WelcomeMsg = async () => {
-  const session = await getServerSession();
-  await wait(3000);
+  const session = await auth();
 
   if (!session?.user) {
     return <p>Not Authorized</p>;
@@ -51,11 +55,11 @@ const WelcomeMsgFallback = () => {
 };
 
 const CollectionList = async () => {
-  const session = await getServerSession();
+  const session = await auth();
   const user = session?.user;
   const collections = await prisma.collection.findMany({
     include: {
-      tasks: true
+      tasks: true,
     },
     where: {
       userId: user?.email!,
@@ -68,21 +72,23 @@ const CollectionList = async () => {
         <Alert>
           <SadFace />
           <AlertTitle>There are no collection yet!</AlertTitle>
-          <AlertDescription>Create a collection to get started</AlertDescription>
+          <AlertDescription>
+            Create a collection to get started
+          </AlertDescription>
         </Alert>
-        <CreateCollectionBtn/>
+        <CreateCollectionBtn />
       </div>
     );
   }
 
-  return(
+  return (
     <>
-      <CreateCollectionBtn/>
+      <CreateCollectionBtn />
       <div className="flex flex-col gap-4 mt-6">
-        {collections.map(collection => (
-          <CollectionCard key={collection.id} collection={collection}/>
+        {collections.map((collection) => (
+          <CollectionCard key={collection.id} collection={collection} />
         ))}
       </div>
     </>
-  )
+  );
 };

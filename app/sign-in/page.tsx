@@ -14,14 +14,16 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useLayoutEffect, useState } from "react";
 
-const page = () => {
+const SignIn = () => {
   const session = useSession();
   const router = useRouter();
+
   useLayoutEffect(() => {
-    if (session) {
+    if (session.data?.user) {
       router.push("/");
     }
-  }, []);
+  }, [session, router]);
+
   return (
     <Card className="w-96 text-center">
       <CardHeader>
@@ -54,4 +56,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default SignIn;
