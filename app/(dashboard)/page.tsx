@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import prisma from "@/lib/primsa";
 import { Suspense } from "react";
 import { auth } from "@/auth";
+import { Prisma } from "@prisma/client";
 
 export default async function Home() {
   const session = await auth();
@@ -57,16 +58,28 @@ const WelcomeMsgFallback = () => {
 const CollectionList = async () => {
   const session = await auth();
   const user = session?.user;
-  const collections = await prisma.collection.findMany({
-    include: {
-      tasks: true,
-    },
-    where: {
-      userId: user?.email!,
-    },
-  });
 
-  if (collections.length === 0) {
+  try {
+    const collections = await prisma.collection.findMany({
+      include: {
+        tasks: true,
+      },
+      where: {
+        userId: user?.email!,
+      },
+    });
+
+    return (
+      <>
+        <CreateCollectionBtn />
+        <div className="flex flex-col gap-4 mt-6">
+          {collections.map((collection) => (
+            <CollectionCard key={collection.id} collection={collection} />
+          ))}
+        </div>
+      </>
+    );
+  } catch (error) {
     return (
       <div className="flex flex-col gap-5">
         <Alert>
@@ -80,15 +93,4 @@ const CollectionList = async () => {
       </div>
     );
   }
-
-  return (
-    <>
-      <CreateCollectionBtn />
-      <div className="flex flex-col gap-4 mt-6">
-        {collections.map((collection) => (
-          <CollectionCard key={collection.id} collection={collection} />
-        ))}
-      </div>
-    </>
-  );
 };
